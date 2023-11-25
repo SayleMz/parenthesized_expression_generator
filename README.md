@@ -19,7 +19,7 @@ PEG(
 
 ## Example:
 ```py
-# Generating a random bitwise parenthesized expression of two unknown variables a, b and b
+# Generating a random bitwise parenthesized expression of two unknown variables a, b and c
 from PEG import PEG
 
 literals = 'abc'
