@@ -3,11 +3,10 @@ from random import choice, randint
 '''A Parenthesized Expression Generator given literals and operators'''
 class PEG:
 
-    def __init__(self, literalsTreshold, literals, operators):
-        if type(literalsTreshold) != int or literalsTreshold <= 0:
-            raise Exception('literalsTreshold must be a strictly positive integer')
-        
-        self.literalsTreshold = literalsTreshold
+    def __init__(self, literalsCount, nestedParenthesisTreshold, literals, operators):
+        for parameter in literalsCount, nestedParenthesisTreshold:
+            if type(parameter) != int or parameter <= 0:
+                raise Exception('literalsCounts and nestedParenthesisTreshold must be strictly positive integer')
         
         # we assert literals and operators can be used by random.choice
         for collection in literals, operators:
@@ -16,33 +15,30 @@ class PEG:
 
         self.literals = literals
         self.operators = operators
-        self.parenthesis = 5
 
         self.value = ''
-        self.__expression()
+        self.__expression(0, literalsCount, nestedParenthesisTreshold)
 
     # generates an expression
-    def __expression(self, depth = 0):
-        if  self.literalsTreshold <= 1:
-            self.__literal()
-            return
+    def __expression(self, depth, literalsCount, NestedParenthesisTreshold):
         
-        dice = randint(0, 2)
-        print(' ' * depth + ' ' + str(dice))
+        dice = randint(0, 1)
+        if NestedParenthesisTreshold == 0:
+            dice = 1
+        if literalsCount == 1:
+            dice = 2
+
         if  dice == 0:
             self.value += '('
-            self.__expression(depth + 1)
+            self.__expression(depth + 1, literalsCount, NestedParenthesisTreshold - 1)
             self.value += ')'
         elif dice == 1:
-            if self.literalsTreshold > 0:
-                self.__literal()
-                self.__operator()
-            self.__expression(depth + 1)
+            part = randint(1, literalsCount - 1)
+            self.__expression(depth + 1, part, NestedParenthesisTreshold)
+            self.__operator()
+            self.__expression(depth + 1, literalsCount - part, NestedParenthesisTreshold)
         else:
-            self.__expression(depth + 1)
-            if self.literalsTreshold > 0:
-                self.__operator()
-                self.__literal()
+            self.__literal()
 
     # generates a generator
     def __operator(self):
@@ -50,7 +46,6 @@ class PEG:
 
     # generates a literal
     def __literal(self):
-        self.literalsTreshold -= 1
         self.value += choice(self.literals)
         
-print(PEG(3, 'abc', '/*-+').value)
+# print(PEG(5, 'abc', '/*-+').value)
