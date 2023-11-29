@@ -26,22 +26,22 @@ class PEG:
         self.__expression(self.literalsCount, self.nestedParenthesisTreshold)
 
     # generates an expression recursively
-    def __expression(self, literalsCount, NestedParenthesisTreshold):
+    def __expression(self, literalsCount, nestedParenthesisTreshold):
         
         dice = randint(0, 1)
-        if NestedParenthesisTreshold == 0:
+        if nestedParenthesisTreshold == 0:
             dice = 1
         if literalsCount == 1:
             dice = 2
 
         if  dice == 0:
             self.value += '('
-            self.__expression(literalsCount, NestedParenthesisTreshold - 1)
+            self.__expression(literalsCount, nestedParenthesisTreshold - 1)
             self.value += ')'
         elif dice == 1:
             part = randint(1, literalsCount - 1)
-            self.__expression(part, NestedParenthesisTreshold)
+            self.__expression(part, nestedParenthesisTreshold)
             self.value += choice(self.operators)
-            self.__expression(literalsCount - part, NestedParenthesisTreshold)
+            self.__expression(literalsCount - part, nestedParenthesisTreshold)
         else:
             self.value += choice(self.literals)
