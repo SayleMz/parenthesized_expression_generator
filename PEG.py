@@ -16,11 +16,17 @@ class PEG:
         self.literals = literals
         self.operators = operators
 
-        self.value = ''
-        self.__expression(0, literalsCount, nestedParenthesisTreshold)
+        self.literalsCount = literalsCount
+        self.nestedParenthesisTreshold = nestedParenthesisTreshold
 
-    # generates an expression
-    def __expression(self, depth, literalsCount, NestedParenthesisTreshold):
+        self.generate()
+
+    def generate(self):
+        self.value = ''
+        self.__expression(self.literalsCount, self.nestedParenthesisTreshold)
+
+    # generates an expression recursively
+    def __expression(self, literalsCount, NestedParenthesisTreshold):
         
         dice = randint(0, 1)
         if NestedParenthesisTreshold == 0:
@@ -30,22 +36,12 @@ class PEG:
 
         if  dice == 0:
             self.value += '('
-            self.__expression(depth + 1, literalsCount, NestedParenthesisTreshold - 1)
+            self.__expression(literalsCount, NestedParenthesisTreshold - 1)
             self.value += ')'
         elif dice == 1:
             part = randint(1, literalsCount - 1)
-            self.__expression(depth + 1, part, NestedParenthesisTreshold)
-            self.__operator()
-            self.__expression(depth + 1, literalsCount - part, NestedParenthesisTreshold)
+            self.__expression(part, NestedParenthesisTreshold)
+            self.value += choice(self.operators)
+            self.__expression(literalsCount - part, NestedParenthesisTreshold)
         else:
-            self.__literal()
-
-    # generates a generator
-    def __operator(self):
-        self.value += choice(self.operators)
-
-    # generates a literal
-    def __literal(self):
-        self.value += choice(self.literals)
-        
-# print(PEG(5, 'abc', '/*-+').value)
+            self.value += choice(self.literals)
